@@ -34,6 +34,9 @@ class KAStar:
         self._opened = Opened()
         self._opened.push(self._best)   
         
+        self.counter_heuristic = 0
+        
+        
         
         
     
@@ -43,23 +46,18 @@ class KAStar:
          Description: Run A* Algorithm.
         =======================================================================
         """
-        path_log = 'C:\\Temp\\1908\\log.csv'
-        file_log = open(path_log,'w')
         while (True):
             if (self._opened.is_empty()):
-                self._best = None
-                file_log.close()
+                self._best = None                
                 return
             self._best = self._opened.pop()
             self._closed.add(self._best)
-            file_log.write('best,{0},{1},{2}\n'.format(self._best.idd,self._best.father,self._best.f))
             if (self._best.idd in self._goals_active):
                 self._goals_active.remove(self._best.idd)
                 for node in self._opened._opened:
                     self._update_node(node,node.father,node.g,self._goals_active)
             
             if not self._goals_active:
-                file_log.close()
                 return
             self._expand()    
             
@@ -83,7 +81,15 @@ class KAStar:
             path.append(node.idd)
         path.reverse()        
         return path
-        
+    
+    
+    def get_must_expanded_nodes(self):
+        nodes = set()
+        for goal in self.goals:
+            path = set(self.get_path(goal))
+            nodes.update(path)
+        return len(nodes)
+    
        
     def _expand(self):   
         """
@@ -122,8 +128,10 @@ class KAStar:
         h = float('Infinity')
         for goal in goals:
             h_cur = u_grid.manhattan_distance(self._grid,node.idd,goal)
+            self.counter_heuristic += 1
             if (h_cur < h):
                 h = h_cur
+        node.h = h
         node.f = node.g + h        
 
     
@@ -219,7 +227,7 @@ def tester():
     print('====================\nEnd Tester\n====================')        
     
     
-#tester()
+tester()
   
 
 """

@@ -14,6 +14,7 @@ class Node:
         self.w = 1  
         self.father = None  
         self.g = float('Infinity')
+        self.h = float('Infinity')
         self.f = float('Infinity')
         
     

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('C:\\Python')
+sys.path.append('g:\\python modules\f_grid')
 
 import u_grid
 from node import Node
@@ -20,14 +20,14 @@ class AStar:
         """  
         self.start = start
         self.goal = goal
-        self._grid = grid
+        self.grid = grid
         
-        self._best = Node(start)
-        self._best.g = 0
+        self.best = Node(start)
+        self.best.g = 0
         
-        self._closed = set()                     
-        self._opened = Opened()
-        self._opened.push(self._best)   
+        self.closed = set()                     
+        self.opened = Opened()
+        self.opened.push(self.best)   
         
     
     def run(self):
@@ -37,12 +37,12 @@ class AStar:
         =======================================================================
         """
         while (True):
-            if (self._opened.is_empty()):
-                self._best = None
+            if (self.opened.is_empty()):
+                self.best = None
                 return
-            self._best = self._opened.pop()
-            self._closed.add(self._best)
-            if (self._best.idd == self.goal):
+            self.best = self.opened.pop()
+            self.closed.add(self.best)
+            if (self.best.idd == self.goal):
                 return
            
             self._expand()    
@@ -56,7 +56,7 @@ class AStar:
          Return: List of Nodes.
         =======================================================================
         """
-        node = self._best
+        node = self.best
         path = [node.idd]
         while (node.idd != self.start):
             node = node.father
@@ -72,17 +72,17 @@ class AStar:
          Description: Expand the Best Node's Children.
         ===================================================================
         """     
-        row, col = u_grid.to_row_col(self._grid, self._best.idd)
-        idds = u_grid.get_neighbors(self._grid, row, col)
-        children = {Node(x) for x in idds} - self._closed      
-        for child in children:
-            g_new = self._best.g + child.w
+        row, col = u_grid.to_row_col(self.grid, self.best.idd)
+        idds = u_grid.get_neighbors(self.grid, row, col)
+        children = {Node(x) for x in idds} - self.closed      
+        for child in sorted(children):
+            g_new = self.best.g + child.w
             if child.g <= g_new:
                 continue
-            if self._opened.contains(child):
-                self._opened.remove(child)
-            self._update_node(child,self._best,g_new)
-            self._opened.push(child)
+            if self.opened.contains(child):
+                self.opened.remove(child)
+            self._update_node(child,self.best,g_new)
+            self.opened.push(child)
             
             
     def _update_node(self, node, father, g):
@@ -100,7 +100,7 @@ class AStar:
         """
         node.father = father
         node.g = g
-        h = u_grid.manhattan_distance(self._grid,node.idd,self.goal)
+        h = u_grid.manhattan_distance(self.grid,node.idd,self.goal)
         node.f = node.g + h        
 
     
@@ -124,7 +124,7 @@ def tester():
         astar = AStar(grid,start,goal)        
         astar.run()
         closed_true = {Node(0),Node(4),Node(8),Node(12)}
-        p1 = closed_true == astar._closed     
+        p1 = closed_true == astar.closed     
         
         grid = u_grid.gen_symmetric_grid(4)
         grid[0][2] = -1
@@ -134,7 +134,7 @@ def tester():
         astar = AStar(grid,start,goal)
         astar.run()
         closed_true = {Node(0),Node(1),Node(3),Node(4),Node(5),Node(7),Node(9),Node(10),Node(11)}          
-        p2 = closed_true == astar._closed
+        p2 = closed_true == astar.closed
         
         fname = sys._getframe().f_code.co_name[7:]
         if (p1 and p2):        
@@ -187,5 +187,5 @@ def tester():
     print('====================\nEnd Tester\n====================')        
     
     
-#tester()
+tester()
     
